@@ -21,14 +21,14 @@ var (
 	unMount = []string{"-unmount"}
 
 	daemonTools string
-	potPlayer   string
+	mediaPlayer string
 	blurayDrive string
 	movieDir    string
 )
 
 func init() {
 	flag.StringVar(&daemonTools, "d", "", "Daemon tools path.")
-	flag.StringVar(&potPlayer, "p", "", "PotPlayer path.")
+	flag.StringVar(&mediaPlayer, "p", "", "Media player path.")
 	flag.StringVar(&blurayDrive, "b", "", "Daemon tools drive path.")
 	flag.StringVar(&movieDir, "m", "", "Path to search for movie.")
 	flag.Parse()
@@ -67,12 +67,12 @@ func main() {
 }
 
 func playFolder(path string) {
-	runCmd(exec.Command(potPlayer, path))
+	runCmd(exec.Command(mediaPlayer, path))
 }
 
 func playISO(path string) {
 	runCmd(exec.Command(daemonTools, append(mount, blurayDrive+",", path)...))
-	runCmd(exec.Command(potPlayer, blurayDrive+":"))
+	runCmd(exec.Command(mediaPlayer, blurayDrive+":"))
 	runCmd(exec.Command(daemonTools, append(unMount, blurayDrive)...))
 }
 
