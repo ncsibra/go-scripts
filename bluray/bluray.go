@@ -36,7 +36,7 @@ func init() {
 
 func main() {
 	movieDir = strings.TrimRight(movieDir, `\"`)
-	var moviePath string
+	moviePath := movieDir
 	var iso bool
 
 	filepath.Walk(movieDir, func(path string, fi os.FileInfo, err error) error {
