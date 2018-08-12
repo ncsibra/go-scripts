@@ -23,23 +23,23 @@ var (
 	daemonTools string
 	mediaPlayer string
 	blurayDrive string
-	movieDir    string
+	basePath    string
 )
 
 func init() {
 	flag.StringVar(&daemonTools, "d", "", "Daemon tools path.")
 	flag.StringVar(&mediaPlayer, "p", "", "Media player path.")
 	flag.StringVar(&blurayDrive, "b", "", "Daemon tools drive path.")
-	flag.StringVar(&movieDir, "m", "", "Path to search for movie.")
+	flag.StringVar(&basePath, "m", "", "Path to search for movie.")
 	flag.Parse()
 }
 
 func main() {
-	movieDir = strings.TrimRight(movieDir, `\"`)
-	moviePath := movieDir
+	basePath = strings.TrimRight(basePath, `\"`)
+	moviePath := basePath
 	var iso bool
 
-	filepath.Walk(movieDir, func(path string, fi os.FileInfo, err error) error {
+	filepath.Walk(basePath, func(path string, fi os.FileInfo, err error) error {
 		if err != nil {
 			log.Fatalln("Error during walk:", err)
 		}
