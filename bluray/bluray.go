@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -17,19 +19,15 @@ const (
 )
 
 var (
-	mount   = []string{"-mount", "dt,"}
-	unMount = []string{"-unmount"}
+	mount   = `(Mount-DiskImage -ImagePath '%s' -PassThru | Get-Volume).DriveLetter`
+	unMount = `Dismount-DiskImage -ImagePath '%s'`
 
-	daemonTools string
 	mediaPlayer string
-	blurayDrive string
 	basePath    string
 )
 
 func init() {
-	flag.StringVar(&daemonTools, "d", "", "Daemon tools path.")
 	flag.StringVar(&mediaPlayer, "p", "", "Media player path.")
-	flag.StringVar(&blurayDrive, "b", "", "Daemon tools drive path.")
 	flag.StringVar(&basePath, "m", "", "Path to search for movie.")
 	flag.Parse()
 }
@@ -71,16 +69,18 @@ func playFolder(path string) {
 }
 
 func playISO(path string) {
-	runCmd(exec.Command(daemonTools, append(mount, blurayDrive+",", path)...))
-	runCmd(exec.Command(mediaPlayer, blurayDrive+":"))
-	runCmd(exec.Command(daemonTools, append(unMount, blurayDrive)...))
+	driveLetter := runCmd(exec.Command("powershell", "-Command", fmt.Sprintf(mount, path)))
+	runCmd(exec.Command(mediaPlayer, driveLetter+":"))
+	runCmd(exec.Command("powershell", "-Command", fmt.Sprintf(unMount, path)))
 }
 
-func runCmd(cmd *exec.Cmd) {
+func runCmd(cmd *exec.Cmd) string {
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
-	err := cmd.Run()
+	out, err := cmd.Output()
 
 	if err != nil {
 		log.Printf("Error while running command. \n%v \n%v", cmd.Args, err)
 	}
+
+	return string(bytes.TrimSpace(out))
 }
