@@ -47,7 +47,6 @@ func main() {
 			iso = true
 			return io.EOF
 		}
-
 		if fi.IsDir() && filepath.Base(path) == bluRayDir {
 			moviePath = path
 			return io.EOF
